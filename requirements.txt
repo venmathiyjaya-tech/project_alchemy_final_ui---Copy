@@ -1,0 +1,14 @@
+flask
+flask-login
+flask-sqlalchemy
+torch
+transformers
+datasets
+scikit-learn
+numpy
+pandas
+matplotlib
+plotly
+werkzeug
+bcrypt
+python-dotenv

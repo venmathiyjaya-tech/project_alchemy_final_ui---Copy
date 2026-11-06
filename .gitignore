@@ -1,0 +1,21 @@
+.env
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+instance/
+*.db
+*.exe
+
+# model weights are large - keep them out of git (the small saved_model.joblib stays tracked)
+models/*.pkl
+models/*.pt
+models/roberta_finetuned*/
+models/roberta_scratch*/
+
+# NRC VAD Lexicon: free for research use but not for redistribution - cite the download page instead
+data/NRC-VAD-Lexicon.txt
+
+# generated results
+experiments/*.csv
+lexicon_ablation_results.csv

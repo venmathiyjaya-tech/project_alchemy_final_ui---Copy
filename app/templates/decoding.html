@@ -1,0 +1,517 @@
+{% extends "base.html" %}
+{% block title %}The Decoding Chamber — VASYA{% endblock %}
+{% block main_class %}main-content--full{% endblock %}
+
+{% block content %}
+<div class="decoding-chamber" id="decoding-chamber">
+
+  <canvas id="decoding-canvas"></canvas>
+
+  <div class="vignette" style="position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(0,0,0,0.75) 100%);"></div>
+
+  <div class="decoding-chamber__content">
+
+    <div class="decoding-chamber__glyph" id="decoding-glyph" aria-hidden="true">
+      <svg viewBox="0 0 200 200" width="180" height="180">
+        <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(201,168,76,0.3)"
+                stroke-width="0.5" class="dc-ring dc-ring--outer"/>
+        <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(201,168,76,0.2)"
+                stroke-width="0.5" class="dc-ring dc-ring--mid"/>
+        <circle cx="100" cy="100" r="30" fill="none" stroke="rgba(201,168,76,0.15)"
+                stroke-width="0.5" class="dc-ring dc-ring--inner"/>
+        <polygon points="100,20 172,152 28,152" fill="none"
+                 stroke="rgba(201,168,76,0.15)" stroke-width="0.5"
+                 class="dc-triangle"/>
+        <circle cx="100" cy="100" r="3" fill="rgba(201,168,76,0.8)"
+                class="dc-centre"/>
+        <g class="dc-constellation">
+          <circle cx="100" cy="10"  r="1.5" fill="rgba(201,168,76,0.4)"/>
+          <circle cx="100" cy="190" r="1.5" fill="rgba(201,168,76,0.4)"/>
+          <circle cx="10"  cy="100" r="1.5" fill="rgba(201,168,76,0.4)"/>
+          <circle cx="190" cy="100" r="1.5" fill="rgba(201,168,76,0.4)"/>
+          <circle cx="29"  cy="29"  r="1.5" fill="rgba(201,168,76,0.4)"/>
+          <circle cx="171" cy="171" r="1.5" fill="rgba(201,168,76,0.4)"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="decoding-chamber__text-wrap">
+      <span class="overline decoding-chamber__overline">The Decoding Chamber</span>
+      <p class="decoding-chamber__status" id="decoding-status"
+         aria-live="polite" aria-atomic="true">
+        Interpreting emotional residue…
+      </p>
+      <div class="decoding-chamber__waveform" aria-hidden="true">
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+        <div class="waveform-bar"></div>
+      </div>
+      <p class="decoding-chamber__sub" id="decoding-sub">
+        The archive is listening beneath your words.
+      </p>
+    </div>
+
+  </div></div>{% endblock %}
+
+
+{% block scripts %}
+<script>
+(function () {
+  'use strict';
+
+  /* ── Status text rotation ────────────────────────────────────────────── */
+  const LINES = [
+    'Interpreting emotional residue…',
+    'Tracing recurring emotional patterns…',
+    'Listening beneath language…',
+    'Aligning sentiment vectors…',
+    'Translating memory into scent…',
+    'The archive is reading you…',
+    'Mapping your emotional constellation…',
+    'Distilling the essence of your week…',
+  ];
+
+  const SUB_LINES = [
+    'The archive is listening beneath your words.',
+    'Your emotional landscape is taking form.',
+    'Pattern recognition in progress.',
+    'A ritual is being prepared for you.',
+    'The scent is crystallising.',
+  ];
+
+  const statusEl = document.getElementById('decoding-status');
+  const subEl    = document.getElementById('decoding-sub');
+
+  let lineIdx = 0;
+  let subIdx  = 0;
+
+  function cycleText() {
+    if (!statusEl) return;
+    statusEl.style.opacity = '0';
+    setTimeout(() => {
+      lineIdx = (lineIdx + 1) % LINES.length;
+      statusEl.textContent = LINES[lineIdx];
+      statusEl.style.opacity = '1';
+    }, 600);
+  }
+
+  function cycleSub() {
+    if (!subEl) return;
+    subEl.style.opacity = '0';
+    setTimeout(() => {
+      subIdx = (subIdx + 1) % SUB_LINES.length;
+      subEl.textContent = SUB_LINES[subIdx];
+      subEl.style.opacity = '1';
+    }, 600);
+  }
+
+  setInterval(cycleText, 2400);
+  setInterval(cycleSub,  4200);
+
+  /* ── Canvas — floating particles + waveform ──────────────────────────── */
+  const canvas = document.getElementById('decoding-canvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H, particles = [], t = 0;
+
+  // Persist tracking states globally for runtime responsive calculations
+  let currentCachedEmotions = [];
+  let dynamicLinePositions = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+
+    const lineCanvas = document.getElementById('constellation-lines');
+    if (lineCanvas) {
+      lineCanvas.width = W;
+      lineCanvas.height = H;
+
+      // recalculate positions dynamically on display change or window snap
+      if (currentCachedEmotions.length > 0) {
+        const cx = W / 2, cy = H / 2;
+        const radius = Math.min(W, H) * 0.22;
+        dynamicLinePositions = [];
+
+        const liveNodes = document.querySelectorAll('.constellation-node');
+        liveNodes.forEach((node) => {
+          const idx = parseInt(node.dataset.index, 10);
+          const angle = (idx / currentCachedEmotions.length) * Math.PI * 2 - Math.PI / 2;
+          const r = idx === 0 ? radius * 0.42 : radius;
+          const nodeW = 90, nodeH = 55;
+
+          const x = cx + Math.cos(angle) * r - nodeW / 2;
+          const y = cy + Math.sin(angle) * r - nodeH / 2;
+
+          node.style.left = `${x}px`;
+          node.style.top = `${y}px`;
+
+          dynamicLinePositions.push({
+            cx: cx + Math.cos(angle) * r,
+            cy: cy + Math.sin(angle) * r
+          });
+        });
+
+        drawConstellationLines(lineCanvas, [], dynamicLinePositions);
+      }
+    }
+  }
+
+  function Particle() { this.reset(true); }
+  Particle.prototype.reset = function (init) {
+    this.x    = Math.random() * W;
+    this.y    = init ? Math.random() * H : H + 5;
+    this.r    = Math.random() * 1.5 + 0.3;
+    this.vx   = (Math.random() - 0.5) * 0.3;
+    this.vy   = -Math.random() * 0.4 - 0.1;
+    this.life = 0;
+    this.maxL = Math.random() * 0.7 + 0.3;
+  };
+
+  function init() {
+    resize();
+    particles = Array.from({ length: 120 }, () => new Particle());
+  }
+
+  function drawFrame() {
+    ctx.clearRect(0, 0, W, H);
+    t++;
+
+    // Particles
+    particles.forEach(p => {
+      p.x += p.vx + Math.sin(t * 0.02 + p.y * 0.01) * 0.15;
+      p.y += p.vy;
+      p.life += 0.002;
+      if (p.life > p.maxL || p.y < -5) p.reset(false);
+      const a = Math.sin((p.life / p.maxL) * Math.PI) * 0.55;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(201,168,76,${a})`;
+      ctx.fill();
+    });
+
+    // Subtle background horizontal waveform lines
+    ctx.save();
+    ctx.globalAlpha = 0.06;
+    ctx.strokeStyle = '#c9a84c';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 3; i++) {
+      const yBase = H * (0.3 + i * 0.2);
+      ctx.beginPath();
+      for (let x = 0; x < W; x += 4) {
+        const y = yBase + Math.sin((x * 0.01) + t * 0.04 + i * 1.2) * 18
+                        + Math.sin((x * 0.02) + t * 0.02 + i) * 8;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    requestAnimationFrame(drawFrame);
+  }
+
+  window.addEventListener('resize', resize);
+  init();
+  drawFrame();
+
+  /* ── SVG ring animations via JS ──────────────────────────────────────── */
+  const outer = document.querySelector('.dc-ring--outer');
+  const mid   = document.querySelector('.dc-ring--mid');
+  const inner = document.querySelector('.dc-ring--inner');
+  const tri   = document.querySelector('.dc-triangle');
+
+  let angle = 0;
+  function animateSVG() {
+    angle += 0.3;
+    if (outer) outer.setAttribute('transform', `rotate(${angle}, 100, 100)`);
+    if (mid)   mid.setAttribute('transform',   `rotate(${-angle * 1.4}, 100, 100)`);
+    if (inner) inner.setAttribute('transform', `rotate(${angle * 2}, 100, 100)`);
+    if (tri)   tri.setAttribute('transform',   `rotate(${angle * 0.5}, 100, 100)`);
+    requestAnimationFrame(animateSVG);
+  }
+  animateSVG();
+
+  /* ── Emotion constellation reveal ───────────────────────────────────── */
+  const EMOTION_COLORS = {
+    joy:       '#c8a84a', love:      '#d4a0a8', sadness:   '#9ab0d4',
+    anger:     '#d08888', fear:      '#bba0d8', surprise:  '#78c0b8',
+    neutral:   '#a89070', curiosity: '#88b8e0', admiration:'#d4b868',
+    gratitude: '#7cc09c', relief:    '#88bcdc', remorse:   '#c090a4',
+    disappointment: '#bca870',
+  };
+
+  function getEmotionColor(label) {
+    return EMOTION_COLORS[(label || '').toLowerCase()] || '#a89070';
+  }
+
+  function buildConstellationNode(label, score, x, y, delay, index) {
+    const node = document.createElement('div');
+    node.className = 'constellation-node';
+    node.dataset.index = index;
+    node.style.cssText = `
+      position:absolute;
+      left:${x}px; top:${y}px;
+      display:flex; flex-direction:column;
+      align-items:center; gap:6px;
+      opacity:0; transform:scale(0.4) translateY(12px);
+      transition:opacity 700ms ${delay}ms cubic-bezier(0.16,1,0.3,1),
+                 transform 700ms ${delay}ms cubic-bezier(0.16,1,0.3,1);
+      pointer-events:none; z-index:5;
+    `;
+    const dot = document.createElement('div');
+    dot.style.cssText = `
+      width:${8 + score * 10}px; height:${8 + score * 10}px;
+      border-radius:50%;
+      background:${getEmotionColor(label)};
+      box-shadow:0 0 ${14 + score * 20}px ${getEmotionColor(label)}55;
+      animation:node-pulse 2.5s ease-in-out infinite ${delay}ms;
+    `;
+    const text = document.createElement('span');
+    text.style.cssText = `
+      font-family:'Montserrat',sans-serif;
+      font-size:0.55rem; font-weight:500;
+      letter-spacing:0.18em; text-transform:uppercase;
+      color:${getEmotionColor(label)};
+      opacity:0.85; white-space:nowrap;
+      text-shadow:0 0 12px ${getEmotionColor(label)}55;
+    `;
+    text.textContent = label;
+    node.appendChild(dot);
+    node.appendChild(text);
+    return node;
+  }
+
+  function drawConstellationLines(canvas, nodes, positions) {
+    const lCtx = canvas.getContext('2d');
+    lCtx.clearRect(0, 0, canvas.width, canvas.height);
+    positions.forEach((a, i) => {
+      positions.forEach((b, j) => {
+        if (j <= i) return;
+        const dist = Math.hypot(a.cx - b.cx, a.cy - b.cy);
+        if (dist > 250) return;
+        const alpha = (1 - dist / 250) * 0.22;
+        lCtx.beginPath();
+        lCtx.moveTo(a.cx, a.cy);
+        lCtx.lineTo(b.cx, b.cy);
+        lCtx.strokeStyle = `rgba(200,168,74,${alpha})`;
+        lCtx.lineWidth = 0.5;
+        lCtx.stroke();
+      });
+    });
+  }
+
+  function spawnConstellation(emotions) {
+    const chamber = document.getElementById('decoding-chamber');
+    if (!chamber || !emotions || emotions.length === 0) return;
+
+    let lineCanvas = document.getElementById('constellation-lines');
+    if (!lineCanvas) {
+      lineCanvas = document.createElement('canvas');
+      lineCanvas.id = 'constellation-lines';
+      lineCanvas.width  = W; lineCanvas.height = H;
+      lineCanvas.style.cssText = `
+        position:absolute;inset:0;pointer-events:none;z-index:4;
+      `;
+      chamber.appendChild(lineCanvas);
+    }
+
+    if (!document.getElementById('node-pulse-kf')) {
+      const s = document.createElement('style');
+      s.id = 'node-pulse-kf';
+      s.textContent = `
+        @keyframes node-pulse {
+          0%,100%{box-shadow:0 0 14px currentColor;}
+          50%{box-shadow:0 0 28px currentColor, 0 0 50px currentColor;}
+        }
+      `;
+      document.head.appendChild(s);
+    }
+
+    currentCachedEmotions = emotions.sort((a,b) => b.score - a.score).slice(0, 6);
+    const radius = Math.min(W, H) * 0.22;
+    const cx = W / 2, cy = H / 2;
+
+    currentCachedEmotions.forEach((em, i) => {
+      const angle = (i / currentCachedEmotions.length) * Math.PI * 2 - Math.PI / 2;
+      const r     = i === 0 ? radius * 0.42 : radius;
+      const nodeW = 90, nodeH = 55;
+      const x = cx + Math.cos(angle) * r - nodeW / 2;
+      const y = cy + Math.sin(angle) * r - nodeH / 2;
+
+      const pos = { cx: cx + Math.cos(angle) * r, cy: cy + Math.sin(angle) * r };
+
+      const node = buildConstellationNode(em.label, em.score, x, y, 400 + i * 350, i);
+      chamber.appendChild(node);
+
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          node.style.opacity   = '1';
+          node.style.transform = 'scale(1) translateY(0)';
+          
+          if (!dynamicLinePositions.some(p => p.cx === pos.cx && p.cy === pos.cy)) {
+            dynamicLinePositions.push(pos);
+          }
+          setTimeout(() => drawConstellationLines(lineCanvas, [], dynamicLinePositions), 180);
+        }, 400 + i * 350);
+      });
+    });
+  }
+
+  /* ── Generate recommendation then redirect ───────────────────────────── */
+  async function runPipeline() {
+    let emotions = [];
+    try {
+      const raw = sessionStorage.getItem('vasya_detected_emotions');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        emotions = Object.entries(parsed)
+          .map(([label, score]) => ({ label, score }))
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 6)
+          .filter(e => e.score > 0.05);
+        sessionStorage.removeItem('vasya_detected_emotions');
+      }
+    } catch (_) {}
+
+    const constellationDuration = emotions.length > 0
+      ? 400 + (emotions.length - 1) * 350 + 700 + 800
+      : 0;
+
+    if (emotions.length > 0) {
+      spawnConstellation(emotions);
+    }
+
+    const apiPromise = VASYA.apiPost('/recommend/generate', {}).catch((err) => {
+      console.error("Pipeline breakdown handled safely:", err);
+      if (statusEl) statusEl.textContent = "Finalising sensory profiles…";
+    });
+
+    const minTimePromise = new Promise(resolve =>
+      setTimeout(resolve, Math.max(constellationDuration, 3500))
+    );
+
+    await Promise.all([apiPromise, minTimePromise]);
+
+    setTimeout(() => {
+      window.location.href = '/recommend/dashboard';
+    }, 600);
+  }
+
+  setTimeout(runPipeline, 800);
+
+})();
+</script>
+
+<style>
+/* ── Decoding Chamber Styling ─────────────────────────────────────────────── */
+.decoding-chamber {
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at 30% 60%, rgba(90,26,32,0.2) 0%, transparent 55%),
+              radial-gradient(ellipse at 70% 30%, rgba(44,31,24,0.35) 0%, transparent 55%),
+              var(--obsidian);
+  display: flex;
+  align-items: center; justify-content: center;
+  flex-direction: column;
+  z-index: 10;
+  overflow: hidden;
+}
+
+#decoding-canvas {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 0;
+}
+
+.decoding-chamber__content {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column;
+  align-items: center; gap: var(--sp-4);
+  text-align: center;
+  padding: var(--sp-4);
+  animation: reveal-up 800ms var(--ease-ritual) both;
+}
+
+.decoding-chamber__glyph {
+  animation: glyph-pulse 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(201,168,76,0.15));
+}
+@keyframes glyph-pulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.04); }
+}
+
+.dc-centre {
+  animation: centre-glow 2s ease-in-out infinite;
+}
+@keyframes centre-glow {
+  0%, 100% { opacity: 0.6; r: 3; }
+  50%       { opacity: 1;   r: 5; }
+}
+
+.decoding-chamber__overline {
+  font-size: 0.55rem; letter-spacing: 0.4em;
+  opacity: 0.5; margin-bottom: 0;
+}
+
+.decoding-chamber__text-wrap {
+  display: flex; flex-direction: column;
+  align-items: center; gap: var(--sp-2);
+  max-width: 480px;
+}
+
+.decoding-chamber__status {
+  font-family: var(--ff-body);
+  font-style: italic;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  color: var(--parchment);
+  line-height: 1.5;
+  min-height: 2em;
+  transition: opacity 500ms var(--ease-ritual);
+}
+
+.decoding-chamber__sub {
+  font-family: var(--ff-ui);
+  font-size: 0.6rem; letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dust); opacity: 0.45;
+  transition: opacity 500ms var(--ease-ritual);
+}
+
+/* Waveform bars */
+.decoding-chamber__waveform {
+  display: flex; align-items: center;
+  gap: 3px; height: 28px;
+}
+.waveform-bar {
+  width: 2px;
+  background: var(--gold);
+  opacity: 0.5;
+  border-radius: 1px;
+  animation: waveform-dance 1.4s ease-in-out infinite alternate;
+}
+@keyframes waveform-dance {
+  0%   { height: 4px;  opacity: 0.25; }
+  100% { height: 24px; opacity: 0.7; }
+}
+.waveform-bar:nth-child(1)  { animation-delay: 0.00s; }
+.waveform-bar:nth-child(2)  { animation-delay: 0.08s; }
+.waveform-bar:nth-child(3)  { animation-delay: 0.16s; }
+.waveform-bar:nth-child(4)  { animation-delay: 0.24s; }
+.waveform-bar:nth-child(5)  { animation-delay: 0.32s; }
+.waveform-bar:nth-child(6)  { animation-delay: 0.40s; }
+.waveform-bar:nth-child(7)  { animation-delay: 0.48s; }
+.waveform-bar:nth-child(8)  { animation-delay: 0.56s; }
+.waveform-bar:nth-child(9)  { animation-delay: 0.64s; }
+.waveform-bar:nth-child(10) { animation-delay: 0.72s; }
+.waveform-bar:nth-child(11) { animation-delay: 0.80s; }
+.waveform-bar:nth-child(12) { animation-delay: 0.88s; }
+</style>
+{% endblock %}

@@ -1,0 +1,514 @@
+[
+  {
+    "id": "VASY_01",
+    "name": "Lavender & Bergamot",
+    "description": "Calming and stabilizing blend for anxiety reduction and improved sleep quality.",
+    "valence": 0.75,
+    "arousal": 0.25,
+    "dominance": 0.6,
+    "emotion_tags": [
+      "relaxation",
+      "calm",
+      "stable",
+      "sleepy"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Lavender increased theta and alpha EEG activity (relaxation) (Sayorwan et al., 2012; Table 2). Bergamot with music increased relaxation (Peng et al., 2009; Table 2). Mixture more effective than lavender alone (Lee, 2016; Table 2)."
+  },
+  {
+    "id": "VASY_02",
+    "name": "Peppermint & Eucalyptus",
+    "description": "Invigorating and alertness-enhancing scent for cognitive performance and physical energy.",
+    "valence": 0.65,
+    "arousal": 0.75,
+    "dominance": 0.7,
+    "emotion_tags": [
+      "alertness",
+      "energized",
+      "refreshed",
+      "focused"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Peppermint enhanced memory and alertness, increased running speed and push-ups (Moss et al., 2008; Raudenbush et al., 2001; Table 3). Eucalyptus reduced pain and blood pressure post-surgery (Jun et al., 2013; Table 3)."
+  },
+  {
+    "id": "VASY_03",
+    "name": "Rosemary & Lemon",
+    "description": "Stimulating and memory-enhancing fragrance for mental clarity and reduced fatigue.",
+    "valence": 0.7,
+    "arousal": 0.65,
+    "dominance": 0.75,
+    "emotion_tags": [
+      "alertness",
+      "awake",
+      "focused",
+      "confidence"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Rosemary increased alertness by decreasing frontal alpha and beta EEG (Diego et al., 1998; Table 2) and enhanced memory performance (Moss et al., 2003; Table 3). Lemon and lavender reduced stress during VDT tasks (Kawakami et al., 1999; Table 2)."
+  },
+  {
+    "id": "VASY_04",
+    "name": "Ylang-Ylang & Sandalwood",
+    "description": "Sensual and deeply relaxing scent for stress relief and mood elevation.",
+    "valence": 0.8,
+    "arousal": 0.3,
+    "dominance": 0.55,
+    "emotion_tags": [
+      "sensuality",
+      "relaxed",
+      "calm",
+      "romantic"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Ylang-ylang decreased blood pressure, increased skin temperature, and increased calmness (Hongratanaworakit & Buchbauer, 2006; Table 3). Sandalwood (awakening) and lavender (sedative) improved productivity (Kawakami et al., 1999; Table 2)."
+  },
+  {
+    "id": "VASY_05",
+    "name": "Jasmine & Rose",
+    "description": "Uplifting and romantic fragrance for positive mood, well-being, and reduced anxiety.",
+    "valence": 0.85,
+    "arousal": 0.5,
+    "dominance": 0.65,
+    "emotion_tags": [
+      "joy",
+      "romantic",
+      "sensuality",
+      "well-being"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Jasmine increased beta wave activity in anterior/left posterior regions and feelings of well-being (Sayowan et al., 2013; Table 2). Rose oil decreased relative sympathetic activity (Haze et al., 2002; Table 3)."
+  },
+  {
+    "id": "VASY_06",
+    "name": "Sweet Orange & Neroli",
+    "description": "Cheerful and anxiolytic citrus blend for reducing state anxiety and improving mood.",
+    "valence": 0.85,
+    "arousal": 0.45,
+    "dominance": 0.6,
+    "emotion_tags": [
+      "happiness",
+      "calm",
+      "refreshed",
+      "pleasantly surprised"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Orange odor reduced anxiety and increased calmness in women (Lehrner et al., 2000; Table 3). Neroli and grapefruit oils increased slow alpha and theta EEG, promoting a relaxed state (Iijima et al., 2007; Table 2)."
+  },
+  {
+    "id": "VASY_07",
+    "name": "Chamomile & Clary Sage",
+    "description": "Gentle sedative and soothing scent for stress reduction and improved sleep.",
+    "valence": 0.7,
+    "arousal": 0.2,
+    "dominance": 0.5,
+    "emotion_tags": [
+      "relaxation",
+      "calm",
+      "sleepy",
+      "soothed"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Chamomile (Roman) had sedative effects and increased subjective calmness (Moss et al., 2006; Table 3). Chamomile and eugenol decreased alpha1 EEG, correlated with comfort (Masago et al., 2000; Table 2)."
+  },
+  {
+    "id": "VASY_08",
+    "name": "Grapefruit & Lemon",
+    "description": "Refreshing and revitalizing scent for reducing cortical deactivation and promoting alertness.",
+    "valence": 0.75,
+    "arousal": 0.6,
+    "dominance": 0.65,
+    "emotion_tags": [
+      "refreshment",
+      "energized",
+      "clean",
+      "awake"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Grapefruit oil increased slow alpha and theta EEG in occipital region, reducing cortical deactivation (Iijima et al., 2007; Table 2). Lemon, lavender, sandalwood improved productivity and reduced stress (Kawakami et al., 1999; Table 2)."
+  },
+  {
+    "id": "VASY_09",
+    "name": "Cinnamon & Clove",
+    "description": "Warm and confidence-boosting spice blend for focus and reduced mental fatigue.",
+    "valence": 0.6,
+    "arousal": 0.55,
+    "dominance": 0.8,
+    "emotion_tags": [
+      "confidence",
+      "awake",
+      "pride",
+      "caring"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Cinnamon and clove (eugenol) decreased alpha1 EEG, correlated with comfort (Masago et al., 2000; Table 2). Spicy/warm scents associated with higher dominance and confidence (ANEW: 'powerful' V:0.68, A:0.73, D:0.91)."
+  },
+  {
+    "id": "VASY_10",
+    "name": "Sandalwood & Cedarwood",
+    "description": "Grounding and meditative woody scent for stability, reflection, and inner strength.",
+    "valence": 0.65,
+    "arousal": 0.3,
+    "dominance": 0.75,
+    "emotion_tags": [
+      "pride",
+      "calm",
+      "grounded",
+      "peaceful"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Sandalwood (sedative) improved work concentration (Kawakami et al., 1999; Table 2). Woody scents associated with low arousal, high dominance, and calm focus (ANEW: 'peace' V:0.84, A:0.24, D:0.56; 'quiet' V:0.57, A:0.23, D:0.43)."
+  },
+  {
+    "id": "VASY_11",
+    "name": "Spearmint & Tea Tree",
+    "description": "Cooling and clarifying blend for mental focus and decongestive freshness.",
+    "valence": 0.68,
+    "arousal": 0.58,
+    "dominance": 0.62,
+    "emotion_tags": [
+      "refreshment",
+      "alert",
+      "clean",
+      "focused"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Spearmint (in GEOS) associated with refreshment and revitalization (Chrea et al., 2009). Tea tree (Melaleuca) used in aromatherapy for psychological disorders (Ali et al., 2015; Table 1)."
+  },
+  {
+    "id": "VASY_12",
+    "name": "Frankincense & Myrrh",
+    "description": "Meditative and grounding resinous scent for spiritual calm and introspection.",
+    "valence": 0.72,
+    "arousal": 0.22,
+    "dominance": 0.68,
+    "emotion_tags": [
+      "peaceful",
+      "grounded",
+      "relaxation",
+      "nostalgic"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Incense (olibanum/frankincense) increased fast alpha activity in bilateral posterior regions, enhancing cortical inhibitory processing (Iijima et al., 2009; Table 2)."
+  },
+  {
+    "id": "VASY_13",
+    "name": "Vanilla & Sandalwood",
+    "description": "Sweet, comforting, and nostalgic fragrance for warmth and emotional security.",
+    "valence": 0.85,
+    "arousal": 0.28,
+    "dominance": 0.58,
+    "emotion_tags": [
+      "sensory pleasure",
+      "calm",
+      "nostalgic",
+      "soothed"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Vanilla odor (real food) reduced theta EEG activity, indicating reduced attention load and increased comfort (Martin, 1998; Table 2). Sandalwood provides grounding woody base."
+  },
+  {
+    "id": "VASY_14",
+    "name": "Cypress & Juniper",
+    "description": "Forest-fresh and purifying scent for post-exercise recovery and mental reset.",
+    "valence": 0.62,
+    "arousal": 0.48,
+    "dominance": 0.7,
+    "emotion_tags": [
+      "refreshment",
+      "clean",
+      "relaxed",
+      "confidence"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Cypress produced favorable impression after physical work (Sugawara et al., 1999; Table 3). Juniper created favorable impression after mental work (Sugawara et al., 1999; Table 3)."
+  },
+  {
+    "id": "VASY_15",
+    "name": "Lemongrass & Geranium",
+    "description": "Uplifting and balancing citrus-herbal blend for stress reduction and mood elevation.",
+    "valence": 0.72,
+    "arousal": 0.55,
+    "dominance": 0.65,
+    "emotion_tags": [
+      "joy",
+      "refreshment",
+      "energized",
+      "well-being"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Geranium oil inhalation lowered state and trait anxiety scores (Morris et al., 1995; Table 3). Lemongrass (Cymbopogon citratus) contains citral (geranial) with stimulating properties (Table 1)."
+  },
+  {
+    "id": "VASY_16",
+    "name": "Patchouli & Bergamot",
+    "description": "Earthy yet bright scent for grounding and emotional balance, reducing sympathetic overactivity.",
+    "valence": 0.68,
+    "arousal": 0.35,
+    "dominance": 0.72,
+    "emotion_tags": [
+      "calm",
+      "grounded",
+      "relaxed",
+      "caring"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Patchouli oil decreased relative sympathetic activity by 40% (Haze et al., 2002; Table 3). Bergamot with music increased relaxation (Peng et al., 2009; Table 2)."
+  },
+  {
+    "id": "VASY_17",
+    "name": "Thyme & Oregano",
+    "description": "Herbaceous and protective scent for mental clarity and immune-supporting comfort.",
+    "valence": 0.55,
+    "arousal": 0.6,
+    "dominance": 0.75,
+    "emotion_tags": [
+      "alert",
+      "confidence",
+      "awake",
+      "caring"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Thyme and oregano (carvacrol, thymol) are major components in essential oils used for psychological disorders (Ali et al., 2015; Table 1). High dominance associated with protective herbs (ANEW: 'strong' V:0.78, A:0.65, D:0.85)."
+  },
+  {
+    "id": "VASY_18",
+    "name": "Neroli & Clary Sage",
+    "description": "Floral-herbal relaxant for reducing anxiety and promoting restorative sleep.",
+    "valence": 0.78,
+    "arousal": 0.24,
+    "dominance": 0.55,
+    "emotion_tags": [
+      "relaxation",
+      "calm",
+      "sleepy",
+      "peaceful"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Neroli oil increased slow alpha and theta EEG in occipital region, reducing cortical deactivation (Iijima et al., 2007; Table 2). Clary sage (Salvia sclarea) used for insomnia and stress (Ali et al., 2015; Table 1)."
+  },
+  {
+    "id": "VASY_19",
+    "name": "Cardamom & Cinnamon",
+    "description": "Warm, spicy, and invigorating blend for focus and social confidence.",
+    "valence": 0.65,
+    "arousal": 0.6,
+    "dominance": 0.78,
+    "emotion_tags": [
+      "confidence",
+      "awake",
+      "pride",
+      "excitement"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Cinnamon (cinnamaldehyde) major component in essential oils (Table 1). Spicy scents associated with high arousal and dominance (ANEW: 'powerful' A:0.73, D:0.91)."
+  },
+  {
+    "id": "VASY_20",
+    "name": "Basil & Peppermint",
+    "description": "Sharp, cooling, and mentally sharpening scent for sustained attention and alertness.",
+    "valence": 0.62,
+    "arousal": 0.72,
+    "dominance": 0.68,
+    "emotion_tags": [
+      "alertness",
+      "energized",
+      "focused",
+      "awake"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Basil (Ocimum basilicum) major component linalool (Table 1). Peppermint enhanced memory and alertness, reduced sleepiness (Moss et al., 2008; Norrish & Dwyer, 2005; Table 3)."
+  },
+  {
+    "id": "VASY_21",
+    "name": "Rose & Geranium",
+    "description": "Floral heart blend for self-compassion, emotional warmth, and reduced irritability.",
+    "valence": 0.82,
+    "arousal": 0.42,
+    "dominance": 0.62,
+    "emotion_tags": [
+      "sensuality",
+      "joy",
+      "caring",
+      "well-being"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Rose oil decreased relative sympathetic activity by 40% (Haze et al., 2002; Table 3). Geranium lowered anxiety (Morris et al., 1995; Table 3). Combined floral notes enhance positive mood."
+  },
+  {
+    "id": "VASY_22",
+    "name": "Eucalyptus & Rosemary",
+    "description": "Medicinal, clear-headed blend for respiratory ease and cognitive sharpness.",
+    "valence": 0.6,
+    "arousal": 0.68,
+    "dominance": 0.72,
+    "emotion_tags": [
+      "alert",
+      "awake",
+      "focused",
+      "refreshment"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Eucalyptus (1,8-cineole) correlated with cognitive performance following rosemary aroma exposure (Moss & Oliver, 2012; Table 3). Rosemary increased alertness (Diego et al., 1998; Table 2)."
+  },
+  {
+    "id": "VASY_23",
+    "name": "Lime & Ylang-Ylang",
+    "description": "Bright tropical-floral scent for mood lifting and mild sedative relaxation.",
+    "valence": 0.78,
+    "arousal": 0.48,
+    "dominance": 0.58,
+    "emotion_tags": [
+      "joy",
+      "relaxed",
+      "romantic",
+      "calm"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Lime (Citrus) shares properties with lemon and grapefruit: increased alpha/theta and reduced stress (Iijima et al., 2007; Table 2). Ylang-ylang increased calmness (Hongratanaworakit & Buchbauer, 2006; Table 3)."
+  },
+  {
+    "id": "VASY_24",
+    "name": "Vetiver & Lavender",
+    "description": "Deep, smoky-herbal grounding for severe anxiety and overthinking.",
+    "valence": 0.7,
+    "arousal": 0.2,
+    "dominance": 0.65,
+    "emotion_tags": [
+      "relaxation",
+      "grounded",
+      "calm",
+      "peaceful"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Lavender increased theta and alpha EEG, reducing mental stress (Sayorwan et al., 2012; Motomura et al., 2001; Table 2 & 3). Vetiver (Chrysopogon zizanioides) traditionally used for grounding; low arousal consistent with ANEW 'peace'."
+  },
+  {
+    "id": "VASY_25",
+    "name": "Black Pepper & Ginger",
+    "description": "Spicy, warming, and energizing scent for physical vitality and motivation.",
+    "valence": 0.58,
+    "arousal": 0.75,
+    "dominance": 0.8,
+    "emotion_tags": [
+      "excitement",
+      "alert",
+      "confidence",
+      "energized"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Black pepper oil increased relative sympathetic activity (Haze et al., 2002; Table 3). Ginger (Zingiber) related to energizing spices. High arousal and dominance from ANEW 'excited' (V:0.80, A:0.83, D:0.77)."
+  },
+  {
+    "id": "VASY_26",
+    "name": "Heliotropin & Vanilla",
+    "description": "Sweet, powdery, and sleep-enhancing aroma for insomnia relief and nighttime calm.",
+    "valence": 0.8,
+    "arousal": 0.18,
+    "dominance": 0.55,
+    "emotion_tags": [
+      "sleepy",
+      "relaxation",
+      "calm",
+      "sensory pleasure"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Heliotropin (aromatic compound) reduced sleepiness and improved refreshment at awakening for insomnia sufferers (Yamagishi et al., 2010; Table 3). Vanilla reduces theta EEG, indicating relaxed attention (Martin, 1998; Table 2)."
+  },
+  {
+    "id": "VASY_27",
+    "name": "Galaxolide & Musk",
+    "description": "Clean, subtle, and undetected-but-effective scent for divided attention and background calm.",
+    "valence": 0.55,
+    "arousal": 0.35,
+    "dominance": 0.6,
+    "emotion_tags": [
+      "calm",
+      "clean",
+      "neutral",
+      "relaxed"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Galaxolide (synthetic musk) produced significant alpha EEG differences even when undetected, suggesting odors affect CNS activity without conscious perception (Lorig et al., 1991; Table 2)."
+  },
+  {
+    "id": "VASY_28",
+    "name": "Linalool & Linalyl Acetate",
+    "description": "Pure lavender-derived terpenes for precise sedative and mood-stabilizing effects.",
+    "valence": 0.75,
+    "arousal": 0.28,
+    "dominance": 0.58,
+    "emotion_tags": [
+      "relaxation",
+      "calm",
+      "soothed",
+      "peaceful"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "(RS)-(±)-linalool significantly decreased beta wave activity after work, indicating sedation (Sugawara et al., 1998; Table 2). Linalyl acetate is major component in lavender (Table 1)."
+  },
+  {
+    "id": "VASY_29",
+    "name": "Limonene & Terpinolene",
+    "description": "Citrus-terpene blend for gender-differentiated relaxation and stabilization.",
+    "valence": 0.72,
+    "arousal": 0.45,
+    "dominance": 0.62,
+    "emotion_tags": [
+      "relaxation",
+      "calm",
+      "refreshment",
+      "stable"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Terpinolene increased relative fast alpha in right prefrontal region, reducing tension and increasing relaxation (Sowndhararajan et al., 2015; Table 2). (+)-Limonene increased fast alpha more in women than men (same reference)."
+  },
+  {
+    "id": "VASY_30",
+    "name": "Cedarwood & Juniper",
+    "description": "Dry, woody, and meditative blend for mental endurance and emotional resilience.",
+    "valence": 0.6,
+    "arousal": 0.28,
+    "dominance": 0.72,
+    "emotion_tags": [
+      "pride",
+      "calm",
+      "grounded",
+      "confidence"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Juniper (Juniperus sps.) major components bornyl acetate, sabinene, α-pinene (Table 1). Juniper created favorable impression after mental work (Sugawara et al., 1999; Table 3). Low arousal woody scents from ANEW 'quiet'."
+  },
+  {
+    "id": "VASY_31",
+    "name": "Peppermint & Jasmine",
+    "description": "Bright, euphoric and awakening blend for high-energy joy, motivation and social lift.",
+    "valence": 0.88,
+    "arousal": 0.83,
+    "dominance": 0.67,
+    "emotion_tags": [
+      "joy",
+      "energized",
+      "awake",
+      "well-being"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Peppermint increased alertness (Moss et al., 2008; Table 3) and was rated more pleasant, stimulating and elating than water (Goel & Lau, 2006; Table 3). Jasmine increased beta EEG activity, linked to feelings of well-being, activity and freshness (Sayowan et al., 2013; Table 2). Jasmine and peppermint were both classed as awakening fragrances (Kawakami et al., 1999; Table 2). VAD anchored on ANEW (Bradley & Lang, 1999): 'excitement' V:0.81, A:0.83, D:0.65; 'thrill' V:0.88, A:0.88, D:0.69; 'joy' V:0.95, A:0.78, D:0.66 (mean V:0.88, A:0.83, D:0.67)."
+  },
+  {
+    "id": "VASY_32",
+    "name": "Roman Chamomile & Heliotropin",
+    "description": "Hushed, sheltering and sedative blend for deep rest and for feeling looked after.",
+    "valence": 0.58,
+    "arousal": 0.32,
+    "dominance": 0.39,
+    "emotion_tags": [
+      "sleepy",
+      "soothed",
+      "sheltered",
+      "cared-for"
+    ],
+    "brand": "Vasya",
+    "scientific_prove_reference": "Roman chamomile had a sedative effect; subjective calmness was linked to that effect and to arousal expectancy (Moss et al., 2006; Table 3). Heliotropin reduced sleepiness and improved refreshment at awakening in insomnia sufferers (Yamagishi et al., 2010; Table 3). Dominance below 0.50 is a design assumption: the ANEW manual describes low dominance as feeling 'cared-for', 'controlled' or 'guided', and no study measured dominance for these aromas. VAD anchored on ANEW (Bradley & Lang, 1999): 'quiet' V:0.57, A:0.23, D:0.43; 'sheltered' V:0.59, A:0.41, D:0.34 (mean V:0.58, A:0.32, D:0.39)."
+  }
+]

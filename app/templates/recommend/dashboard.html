@@ -1,0 +1,472 @@
+{% extends "base.html" %}
+{% block title %}The Observatory — VASYA{% endblock %}
+{% block main_class %}main-content--full{% endblock %}
+
+{% block content %}
+
+<!-- Decoding overlay (used when auto-generating) -->
+<div class="decoding-overlay" id="decoding-overlay" aria-hidden="true">
+  <div class="decoding-ring"></div>
+  <p class="decoding-glyph">✦</p>
+  <p class="decoding-text" id="decoding-text">Interpreting emotional residue…</p>
+</div>
+
+{# Inject server data safely for JS #}
+{% if recommendation %}
+<script id="tpl-data" type="application/json">
+{
+  "rec_id":            {{ recommendation.id }},
+  "scent_name":        {{ (recommendation.scent.name if recommendation.scent else '') | tojson }},
+  "aggregated_vad":    {{ recommendation.aggregated_vad | safe if recommendation.aggregated_vad else '{}' }},
+  "dominant_emotions": {{ recommendation.dominant_emotions | safe if recommendation.dominant_emotions else '[]' }},
+  "user_rating":       {{ recommendation.rating.score if recommendation.rating else 'null' }}
+}
+</script>
+{% endif %}
+
+<div class="observatory">
+
+  <!-- ── Header ─────────────────────────────────────────────────────── -->
+  <div class="observatory__header">
+    <span class="overline">The Observatory</span>
+    <h1 class="observatory__greeting">
+      Your emotional<br><em>landscape</em>
+    </h1>
+    <hr class="rule-gold" />
+  </div>
+
+
+  {% if recommendation %}
+  <!-- ══════════════════════════════════════════════════════════════════
+       WITH RECOMMENDATION — Full Observatory
+  ══════════════════════════════════════════════════════════════════════ -->
+  <div class="observatory__grid">
+
+    <!-- ── LEFT column ──────────────────────────────────────────────── -->
+    <div style="display:flex;flex-direction:column;gap:var(--sp-4);">
+
+      <!-- ── Today's Entry Emotions ────────────────────────────────── -->
+      {% if today_emotions %}
+      <div class="obs-panel obs-panel--today"
+           style="padding:var(--sp-3) var(--sp-4);
+                  border:1px solid rgba(200,168,74,0.15);
+                  background:rgba(3,16,35,0.55);
+                  position:relative;overflow:hidden;">
+        <span style="position:absolute;top:-1.2rem;right:-0.4rem;
+                     font-family:var(--ff-display);font-size:5rem;font-style:italic;
+                     color:var(--gold);opacity:0.04;line-height:1;pointer-events:none;
+                     user-select:none;">✦</span>
+        <span class="overline" style="font-size:0.5rem;display:block;
+              margin-bottom:var(--sp-2);position:relative;z-index:1;">
+          Today's Reflection
+        </span>
+        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;position:relative;z-index:1;">
+          {% for label, score in today_emotions %}
+            <span class="emotion-badge emotion-badge--{{ label | lower | replace(' ', '-') }}"
+                  title="{{ (score * 100) | round | int }}%"
+                  style="display:inline-flex;align-items:center;gap:0.35em;">
+              {{ label }}
+              <span style="font-family:var(--ff-ui);font-size:0.7em;
+                           opacity:0.6;">{{ (score * 100) | round | int }}%</span>
+            </span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Current Emotional Reading -->
+      <div class="obs-panel obs-panel--gold">
+        <span class="overline obs-panel__overline">Current Emotional Reading</span>
+        <p class="emotional-reading">
+          {% if recommendation.dominant_emotions %}
+            {% set em = recommendation.dominant_emotions | from_json %}
+            {% if em %}
+              Your recent emotional landscape carries traces of
+              <em style="color:var(--gold);">{{ em[0] }}</em>
+              {% if em | length > 1 %}, softened by
+              <em style="color:var(--gold-lt);">{{ em[1] }}</em>{% endif %}
+              {% if em | length > 2 %}, with undercurrents of
+              <em style="color:var(--taupe);">{{ em[2] }}</em>{% endif %}.
+              The archive has distilled this into a scent ritual
+              aligned with your present state.
+            {% endif %}
+          {% else %}
+            Your emotional archive has been read. A scent has been
+            distilled to accompany your current state of being.
+          {% endif %}
+        </p>
+      </div>
+
+      <!-- Recent Scent Alignment -->
+      <div class="scent-card">
+        <span class="scent-card__overline">Current Distillation</span>
+        <h2 class="scent-card__name">
+          {{ recommendation.scent.name if recommendation.scent else '—' }}
+        </h2>
+        <span class="scent-card__divider"></span>
+        <p class="scent-card__description">
+          {{ recommendation.scent.description if recommendation.scent else '' }}
+        </p>
+
+        <!-- Emotion badges -->
+        {% if recommendation.dominant_emotions %}
+          {% set em_list = recommendation.dominant_emotions | from_json %}
+          {% if em_list %}
+            <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:var(--sp-3);">
+              {% for emotion in em_list %}
+                <span class="emotion-badge emotion-badge--{{ emotion | lower | replace(' ', '-') }}">
+                  {{ emotion }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endif %}
+
+        {% if recommendation.scent and recommendation.scent.scientific_prove_reference %}
+          <blockquote class="scent-card__reference" 
+                      style="font-style: normal; 
+                            font-weight: 500; 
+                            color: var(--parchment, #f4f1ea); 
+                            opacity: 0.9; 
+                            border-left: 2px solid var(--gold, #c8a84a); 
+                            background: rgba(200, 168, 74, 0.02); 
+                            padding: var(--sp-2, 0.5rem) var(--sp-3, 0.75rem); 
+                            line-height: 1.6; 
+                            letter-spacing: 0.02em; 
+                            font-size: 0.85rem;">
+            <span style="color: var(--gold, #c8a84a); font-family: var(--ff-display); font-style: italic; font-weight: 600; margin-right: 0.35rem;">✦</span> 
+            {{ recommendation.scent.scientific_prove_reference }}
+          </blockquote>
+        {% endif %}
+
+        <!-- VAD -->
+        {% if recommendation.aggregated_vad %}
+          {% set vad = recommendation.aggregated_vad | from_json %}
+          {# aggregated_vad is stored on [-1, 1]; map to 0-100% so negative values do not collapse to 0 #}
+          {% set v_pct = [[((((vad.valence   | float) + 1) / 2) * 100) | round | int, 0] | max, 100] | min %}
+          {% set a_pct = [[((((vad.arousal   | float) + 1) / 2) * 100) | round | int, 0] | max, 100] | min %}
+          {% set d_pct = [[((((vad.dominance | float) + 1) / 2) * 100) | round | int, 0] | max, 100] | min %}
+          <div class="scent-card__vad">
+            <div class="vad-bar-row">
+              <span class="vad-bar-label">Valence</span>
+              <div class="vad-bar-track">
+                <div class="vad-bar-fill" style="width: {{ v_pct }}%;"></div>
+              </div>
+              <span class="vad-bar-value">{{ v_pct }}%</span>
+            </div>
+            <div class="vad-bar-row">
+              <span class="vad-bar-label">Arousal</span>
+              <div class="vad-bar-track">
+                <div class="vad-bar-fill" style="width: {{ a_pct }}%;"></div>
+              </div>
+              <span class="vad-bar-value">{{ a_pct }}%</span>
+            </div>
+            <div class="vad-bar-row">
+              <span class="vad-bar-label">Dominance</span>
+              <div class="vad-bar-track">
+                <div class="vad-bar-fill" style="width: {{ d_pct }}%;"></div>
+              </div>
+              <span class="vad-bar-value">{{ d_pct }}%</span>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Continue Reflection CTA -->
+      <div class="obs-panel" style="text-align:center;padding:var(--sp-4);
+           background:linear-gradient(135deg,var(--espresso) 0%,var(--charcoal) 100%);
+           border-top:1px solid var(--gold);">
+        <p style="font-family:var(--ff-display);font-style:italic;font-size:1.1rem;
+                  color:var(--parchment);margin-bottom:var(--sp-3);line-height:1.4;">
+          "The archive grows richer with each reflection."
+        </p>
+        <a href="{{ url_for('journal.write_page') }}" class="btn-ritual">
+          ✦ &nbsp; Continue Reflection
+        </a>
+      </div>
+
+    </div><!-- /.left -->
+
+
+    <!-- ── RIGHT column ─────────────────────────────────────────────── -->
+    <div style="display:flex;flex-direction:column;gap:var(--sp-4);">
+
+      <!-- Dominant Emotion Triad -->
+      {% if recommendation.dominant_emotions %}
+        {% set em_list = recommendation.dominant_emotions | from_json %}
+        {% if em_list %}
+          <div class="obs-panel">
+            <span class="overline obs-panel__overline">Emotional Triad</span>
+            <div class="emotion-triad" style="margin-top:var(--sp-2);">
+              {% for emotion in em_list %}
+                <div class="emotion-triad__item">
+                  <span class="emotion-triad__rank">{{ loop.index }}</span>
+                  <span class="emotion-triad__name">{{ emotion }}</span>
+                  <div class="emotion-triad__bar">
+                    <div class="emotion-triad__bar-fill"
+                         style="width:{{ (100 - loop.index0 * 28) }}%;"></div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% endif %}
+
+      <!-- Star rating -->
+      <div class="apothecary__rating-panel">
+        <span class="apothecary__rating-label">Rate this ritual</span>
+        <div class="star-rating" id="star-widget"
+             role="radiogroup" aria-label="Rate this scent from 1 to 5">
+          {% for i in range(5, 0, -1) %}
+            <input type="radio" name="score" id="star{{ i }}" value="{{ i }}"
+                   {% if recommendation.rating and recommendation.rating.score == i %}checked{% endif %} />
+            <label for="star{{ i }}" title="{{ i }} star{% if i != 1 %}s{% endif %}">★</label>
+          {% endfor %}
+        </div>
+        <p class="apothecary__rating-status" id="rating-status" aria-live="polite">
+          {% if recommendation.rating %}
+            Marked {{ recommendation.rating.score }}
+            star{% if recommendation.rating.score != 1 %}s{% endif %}.
+          {% else %}
+            Mark this ritual.
+          {% endif %}
+        </p>
+        {# Regenerate removed (issue 10): the same entries always give the same scent. A new ritual starts from a new entry. #}
+        <a href="{{ url_for('recommend.history_page') }}" class="apothecary__history-link">
+          View full archive →
+        </a>
+      </div>
+
+      <!-- Ritual Continuity -->
+      <div class="obs-panel">
+        <span class="overline obs-panel__overline">Ritual Continuity</span>
+        <div style="display:flex;flex-direction:column;gap:var(--sp-2);margin-top:var(--sp-2);">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;
+                      padding:var(--sp-2) 0;border-bottom:1px solid var(--border);">
+            <span style="font-family:var(--ff-body);font-size:0.85rem;color:var(--taupe);">
+              Last ritual
+            </span>
+            <span style="font-family:var(--ff-ui);font-size:0.62rem;letter-spacing:0.12em;
+                         color:var(--gold);">
+              {{ recommendation.generated_at.strftime('%d %b %Y') }}
+            </span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;
+                      padding:var(--sp-2) 0;">
+            <span style="font-family:var(--ff-body);font-size:0.85rem;color:var(--taupe);">
+              Scent distilled
+            </span>
+            <span style="font-family:var(--ff-display);font-style:italic;font-size:0.95rem;
+                         color:var(--parchment);">
+              {{ recommendation.scent.name if recommendation.scent else '—' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reflection quote -->
+      <div class="obs-panel" style="padding:var(--sp-4);text-align:center;
+           border:1px solid var(--border);position:relative;overflow:hidden;">
+        <span style="position:absolute;top:-1rem;right:-0.5rem;
+                     font-family:var(--ff-display);font-size:8rem;font-style:italic;
+                     color:var(--gold);opacity:0.04;line-height:1;pointer-events:none;
+                     user-select:none;">"</span>
+        <p style="font-family:var(--ff-body);font-style:italic;font-size:0.9rem;
+                  color:var(--taupe);line-height:1.78;position:relative;z-index:1;"
+           id="reflection-quote">
+          "Emotion remembered is emotion understood."
+        </p>
+      </div>
+
+    </div><!-- /.right -->
+  </div><!-- /.observatory__grid -->
+
+
+  {% else %}
+  <!-- ══════════════════════════════════════════════════════════════════
+       NO RECOMMENDATION — CTA
+  ══════════════════════════════════════════════════════════════════════ -->
+  <div class="observatory__grid">
+    <div class="observatory__cta">
+      <div style="width:80px;height:80px;border:1px solid rgba(200,168,74,0.2);
+                  border-radius:50%;display:flex;align-items:center;justify-content:center;
+                  animation:glow-pulse 4s ease-in-out infinite;">
+        <span style="font-family:var(--ff-display);font-size:2rem;font-style:italic;
+                     color:var(--gold);opacity:0.5;">✦</span>
+      </div>
+      <span class="overline">Begin</span>
+      <h2 class="observatory__cta-heading" id="cta-heading">
+        The archive listens.
+      </h2>
+      <p class="observatory__cta-body" id="cta-body">
+        Write your first journal entry and Vasya will read your emotional
+        landscape, then distil a bespoke scent ritual for you.
+      </p>
+      <button type="button" class="btn-ritual" id="analyse-btn" hidden>
+        ✦ &nbsp; Distil My Ritual
+      </button>
+      <p class="observatory__cta-hint" id="cta-hint" aria-live="polite"></p>
+      <a href="{{ url_for('journal.write_page') }}" class="btn-ghost"
+         style="margin-top:0.5rem;">
+        Enter the Confessional
+      </a>
+    </div>
+  </div>
+  {% endif %}
+
+</div><!-- /.observatory -->
+
+<a href="{{ url_for('journal.write_page') }}" class="fab-write"
+   aria-label="Write journal entry">
+  <span aria-hidden="true">✦</span>
+</a>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+(function () {
+  'use strict';
+
+  const DECODING_LINES = [
+    'Interpreting emotional residue…',
+    'Tracing recurring emotional patterns…',
+    'Listening beneath language…',
+    'Aligning sentiment vectors…',
+    'Translating memory into scent…',
+    'The archive is reading you…',
+  ];
+
+  const QUOTES = [
+    '"Emotion remembered is emotion understood."',
+    '"What you feel shapes what you inhale."',
+    '"The archive grows richer with each reflection."',
+    '"Scent is memory made tangible."',
+    '"Every entry is an act of emotional courage."',
+    '"The body knows before the mind admits."',
+  ];
+
+  const overlay     = document.getElementById('decoding-overlay');
+  const decodingTxt = document.getElementById('decoding-text');
+  let decodingTimer;
+
+  function showDecoding() {
+    if (!overlay) return;
+    let i = 0;
+    overlay.classList.add('is-active');
+    overlay.removeAttribute('aria-hidden');
+    decodingTimer = setInterval(() => {
+      decodingTxt.textContent = DECODING_LINES[i++ % DECODING_LINES.length];
+    }, 1800);
+  }
+
+  function hideDecoding() {
+    clearInterval(decodingTimer);
+    if (!overlay) return;
+    overlay.classList.remove('is-active');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+
+  /* ── Rotating reflection quote ──────────────────────────────────── */
+  const quoteEl = document.getElementById('reflection-quote');
+  if (quoteEl) {
+    quoteEl.textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  }
+
+  /* ── Parse template data ────────────────────────────────────────── */
+  const tplEl = document.getElementById('tpl-data');
+  const rec   = tplEl ? JSON.parse(tplEl.textContent) : null;
+
+/* ── Star rating ────────────────────────────────────────────────── */
+  const starWidget   = document.getElementById('star-widget');
+  const ratingStatus = document.getElementById('rating-status');
+
+  function lockRatingWidget(message) {
+    if (!starWidget) return;
+    starWidget.querySelectorAll('input[type="radio"]').forEach(input => {
+      input.disabled = true;
+    });
+    starWidget.classList.add('star-rating--sealed');
+    if (ratingStatus) ratingStatus.textContent = message;
+  }
+
+  if (starWidget && rec) {
+    starWidget.addEventListener('change', async e => {
+      const score        = parseInt(e.target.value, 10);
+      const previousScore = rec.user_rating;
+      if (isNaN(score)) return;
+
+      ratingStatus.textContent = 'Sealing the record…';
+      try {
+        await VASYA.apiPost('/recommend/rate', { rec_id: rec.rec_id, score });
+        ratingStatus.textContent = `Marked ${score} star${score !== 1 ? 's' : ''}.`;
+        rec.user_rating = score;
+      } catch (err) {
+        // Revert the visual selection to whatever it was before this click
+        if (previousScore) {
+          const prevInput = starWidget.querySelector(`input[value="${previousScore}"]`);
+          if (prevInput) prevInput.checked = true;
+        } else {
+          starWidget.querySelectorAll('input[type="radio"]').forEach(i => { i.checked = false; });
+        }
+
+        // If the window has closed (403), seal the widget so the user
+        // isn't invited to try again on a ritual that's already archived.
+        if (err.message && (
+              err.message.includes('sealed') ||
+              err.message.includes('closed') ||
+              err.message.includes('archive holds')
+            )) {
+          lockRatingWidget(err.message);
+        } else {
+          ratingStatus.textContent = `Could not save — ${err.message}`;
+        }
+      }
+    });
+  }
+
+  /* Regenerate removed (issue 10): a new ritual starts from a new journal entry. */
+
+  /* ── Auto-generate if no recommendation ────────────────────────── */
+  const ctaHeading = document.getElementById('cta-heading');
+  const ctaBody    = document.getElementById('cta-body');
+  const ctaHint    = document.getElementById('cta-hint');
+  const analyseBtn = document.getElementById('analyse-btn');
+
+  async function autoGenerate() {
+    if (rec) return;
+    showDecoding();
+    try {
+      await VASYA.apiPost('/recommend/generate', {});
+      window.location.reload();
+    } catch (err) {
+      hideDecoding();
+      if (ctaHeading) ctaHeading.textContent = 'The archive listens.';
+      if (ctaBody)    ctaBody.textContent    = 'Write at least one journal entry and Vasya will distil a bespoke scent ritual for you.';
+      if (ctaHint)    ctaHint.textContent    = err.message || 'Begin in the Confessional.';
+      if (analyseBtn) analyseBtn.hidden = false;
+    }
+  }
+
+  if (analyseBtn) {
+    analyseBtn.addEventListener('click', async () => {
+      analyseBtn.disabled = true;
+      showDecoding();
+      try {
+        await VASYA.apiPost('/recommend/generate', {});
+        window.location.reload();
+      } catch (err) {
+        hideDecoding();
+        analyseBtn.disabled = false;
+        if (ctaHint) ctaHint.textContent = err.message;
+      }
+    });
+  }
+
+  autoGenerate();
+
+})();
+</script>
+{% endblock %}

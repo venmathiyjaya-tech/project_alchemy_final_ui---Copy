@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Restore Archive Access — VASYA{% endblock %}
+{% block main_class %}main-content--full{% endblock %}
+
+{% block content %}
+<div class="auth-page" id="auth-unified">
+
+  <div class="auth-left">
+    <canvas class="particles-canvas" id="auth-canvas" style="z-index:1;"></canvas>
+    <div class="auth-left__bg-glyph" aria-hidden="true">V</div>
+    <div class="auth-left__content">
+      <p class="auth-left__wordmark">Vasya</p>
+      <hr class="rule-gold" />
+      <p class="auth-left__quote">"Memory is a safe-house, not a cage."</p>
+      <p class="auth-left__body">
+        If you have lost your passphrase, providing your identity marker along 
+        with your unique recovery statement will safely restore your access configurations.
+      </p>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-panel">
+      
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div id="server-flash-container" role="alert" aria-live="polite"
+               style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:0.5rem;">
+            {% for category, message in messages %}
+              <div class="flash flash--{{ category }}">
+                <span class="flash__icon" aria-hidden="true">✕</span>
+                <p class="flash__message">{{ message }}</p>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <div class="auth-panel__form" id="panel-reset">
+        <p class="auth-panel__subtitle" style="margin-bottom: 1.5rem;">Restore Archive Access</p>
+
+        <form class="auth-form" method="POST" action="{{ url_for('auth.reset') }}" novalidate id="reset-form">
+          
+          <div class="auth-form__field">
+            <label class="field-label" for="reset-identity">Identity</label>
+            <input class="form-input" type="text" id="reset-identity" name="username" required autofocus />
+          </div>
+
+          <div class="auth-form__field">
+            <label class="field-label" for="reset-recovery">Your Recovery Phrase</label>
+            <input class="form-input" type="password" id="reset-recovery" name="recovery_phrase" autocomplete="off" required />
+          </div>
+
+          <div class="auth-form__field">
+            <label class="field-label" for="reset-passphrase">New Passphrase</label>
+            <div class="input-reveal-wrap">
+              <input class="form-input" type="password" id="reset-passphrase" name="password" required minlength="8" />
+              <button type="button" class="input-reveal" data-target="reset-passphrase">show</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-ritual auth-form__submit" style="margin-top: 1.5rem;">
+            Re-Authorize Access
+          </button>
+        </form>
+
+        <a href="{{ url_for('auth.login') }}"
+           style="display:block;text-align:center;margin-top:1rem;font-family:var(--ff-body);font-style:italic;font-size:0.78rem;color:var(--dust);opacity:0.5;text-decoration:none;">
+          Return to Threshold
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  'use strict';
+  
+  // Basic password reveal utility
+  document.querySelectorAll('.input-reveal').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.target);
+      if (!input) return;
+      const visible = input.type === 'text';
+      input.type = visible ? 'password' : 'text';
+      btn.textContent = visible ? 'show' : 'hide';
+    });
+  });
+
+  // Particle Canvas Engine
+  const canvas = document.getElementById('auth-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, pts = [];
+  function resize() { W = canvas.width = canvas.offsetWidth; H = canvas.height = canvas.offsetHeight; }
+  function P() { this.x=Math.random()*W; this.y=Math.random()*H; this.r=Math.random()*0.8+0.2; this.vy=-Math.random()*0.15-0.03; this.life=Math.random(); this.ml=Math.random()*0.5+0.3; }
+  P.prototype.tick = function() { this.y+=this.vy; this.life+=0.002; if(this.life>this.ml||this.y<0){this.x=Math.random()*W;this.y=H;this.life=0;this.ml=Math.random()*0.5+0.3;} };
+  function init() { resize(); pts=Array.from({length:50},()=>new P()); }
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{ p.tick(); const a=Math.sin((p.life/p.ml)*Math.PI)*0.35; ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(200,168,74,${a})`;ctx.fill(); });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', resize);
+  init(); draw();
+})();
+</script>
+{% endblock %}

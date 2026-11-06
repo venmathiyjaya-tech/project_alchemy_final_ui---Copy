@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+{% block title %}Vasya — Project Alchemy{% endblock %}
+{% block main_class %}main-content--full{% endblock %}
+
+{% block content %}
+
+<section class="landing-hero" aria-label="The Invitation">
+  <canvas class="particles-canvas" id="hero-canvas"></canvas>
+  <div class="smoke-layer"></div>
+  <div class="vignette"></div>
+
+  <div class="landing-hero__content">
+    <span class="landing-hero__glyph reveal">✦ &nbsp; Project Alchemy &nbsp; ✦</span>
+
+    <h1 class="landing-hero__heading reveal reveal--delay-1">
+      What does<br>your soul<br><em>smell like?</em>
+    </h1>
+
+    <p class="landing-hero__sub reveal reveal--delay-2">
+      Vasya listens to your emotional landscape and distils
+      a bespoke scent ritual. Ancient alchemy. Living intelligence.
+    </p>
+
+    <div class="landing-hero__actions reveal reveal--delay-3">
+      <a href="{{ url_for('auth.login') }}" class="btn-ritual">
+        Enter the Archive
+      </a>
+      <a href="#philosophy" class="btn-ghost">
+        Learn the Alchemy
+      </a>
+    </div>
+  </div>
+
+  <div class="landing-hero__scroll-hint" aria-hidden="true"
+       style="position:absolute;bottom:1.5rem;left:50%;
+              transform:translateX(-50%);z-index:1;pointer-events:none;">
+    Descend
+  </div>
+</section>
+
+
+<section class="landing-section" id="philosophy" aria-label="Philosophy">
+  <div class="landing-philosophy">
+
+    <div class="landing-philosophy__text reveal">
+      <span class="overline">The Philosophy</span>
+      <hr class="rule-gold" />
+      <p class="landing-philosophy__quote">
+        "Not every emotion asks<br>to be solved.<br>
+        Some ask to be witnessed."
+      </p>
+      <p class="landing-philosophy__body">
+        Vasya is built on the principle that emotion is not a problem —
+        it is a signal. Through careful emotional reading, temporal analysis,
+        and affective computing, we translate what you feel into what you
+        should inhale. Memory. Mood. Molecule.
+      </p>
+      <a href="{{ url_for('auth.login') }}" class="btn-ghost"
+         style="align-self:flex-start;margin-top:1rem;">
+        Begin Your Record
+      </a>
+    </div>
+
+    <div class="landing-philosophy__visual" aria-hidden="true">
+      <canvas id="sacred-canvas" width="300" height="300"
+              style="opacity:0.72;"></canvas>
+    </div>
+
+  </div>
+</section>
+
+
+<section class="landing-section--dark" aria-label="The ritual">
+  <div class="landing-section__inner">
+
+    <div style="text-align:center;margin-bottom:3rem;" class="reveal">
+      <span class="overline">The Ritual</span>
+      <hr class="rule-gold"
+          style="margin:1rem auto;background:linear-gradient(90deg,transparent,var(--gold),transparent);width:80px;" />
+      <h2 style="font-family:var(--ff-display);font-size:clamp(1.8rem,4vw,2.8rem);
+                 font-style:italic;font-weight:300;color:var(--parchment);">
+        Three chambers. One revelation.
+      </h2>
+    </div>
+
+    <div class="landing-pillars">
+
+      <a href="{{ url_for('journal.write_page') }}"
+         class="landing-pillar reveal reveal--delay-1"
+         style="text-decoration:none;">
+        <span class="landing-pillar__glyph">I.</span>
+        <h3 class="landing-pillar__title">The Confessional</h3>
+        <p class="landing-pillar__body">
+          Write freely. There is no wrong answer. Your journal becomes
+          the raw material for emotional analysis — honest, unguarded,
+          and entirely private.
+        </p>
+        <span style="font-family:var(--ff-ui);font-size:0.52rem;letter-spacing:0.22em;
+                     text-transform:uppercase;color:var(--gold);opacity:0.5;
+                     margin-top:auto;display:block;padding-top:var(--sp-2);">
+          Enter →
+        </span>
+      </a>
+
+      <a href="{{ url_for('recommend.dashboard') }}"
+         class="landing-pillar reveal reveal--delay-2"
+         style="text-decoration:none;">
+        <span class="landing-pillar__glyph">II.</span>
+        <h3 class="landing-pillar__title">The Decoding Chamber</h3>
+        <p class="landing-pillar__body">
+          Our emotional AI reads patterns across your last seven days —
+          valence, arousal, dominance — building a temporal emotional portrait
+          of extraordinary precision.
+        </p>
+        <span style="font-family:var(--ff-ui);font-size:0.52rem;letter-spacing:0.22em;
+                     text-transform:uppercase;color:var(--gold);opacity:0.5;
+                     margin-top:auto;display:block;padding-top:var(--sp-2);">
+          Observe →
+        </span>
+      </a>
+
+      <a href="{{ url_for('recommend.dashboard') }}"
+         class="landing-pillar reveal reveal--delay-3"
+         style="text-decoration:none;">
+        <span class="landing-pillar__glyph">III.</span>
+        <h3 class="landing-pillar__title">The Apothecary</h3>
+        <p class="landing-pillar__body">
+          A scent is selected not from a catalogue, but from you.
+          Each recommendation is a distillation of your emotional state —
+          validated by affective neuroscience.
+        </p>
+        <span style="font-family:var(--ff-ui);font-size:0.52rem;letter-spacing:0.22em;
+                     text-transform:uppercase;color:var(--gold);opacity:0.5;
+                     margin-top:auto;display:block;padding-top:var(--sp-2);">
+          Discover →
+        </span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="landing-final" aria-label="Final invitation">
+
+  <span class="overline reveal">Your archive awaits</span>
+
+  <h2 class="landing-final__heading reveal reveal--delay-1">
+    Your emotions leave traces.<br>
+    <em style="color:var(--gold);">Let them be read.</em>
+  </h2>
+
+  <p style="font-family:var(--ff-body);font-style:italic;font-size:1rem;
+            color:var(--taupe);max-width:40ch;line-height:1.82;"
+     class="reveal reveal--delay-2">
+    Memory has a fragrance. Vasya translates emotion into ritual.
+  </p>
+
+  <div class="landing-hero__actions reveal reveal--delay-3">
+    <a href="{{ url_for('auth.login') }}" class="btn-ritual">
+      Open Your Record
+    </a>
+  </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+/* ── Sacred geometry animation ───────────────────────────────────────────── */
+(function () {
+  const canvas = document.getElementById('sacred-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cx = 150, cy = 150;
+  let t = 0;
+
+  function draw() {
+    ctx.clearRect(0, 0, 300, 300);
+    const gold = a => `rgba(200,168,74,${a})`;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(t * 0.003);
+    ctx.strokeStyle = gold(0.25);
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.arc(0, 0, 118, 0, Math.PI * 2);
+    ctx.stroke();
+    for (let i = 0; i < 6; i++) {
+      const angle = (i / 6) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.arc(Math.cos(angle) * 60, Math.sin(angle) * 60, 60, 0, Math.PI * 2);
+      ctx.strokeStyle = gold(0.11 + 0.04 * Math.sin(t * 0.02 + i));
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(-t * 0.005);
+    for (let i = 0; i < 12; i++) {
+      const a = (i / 12) * Math.PI * 2;
+      const r = 80 + 4 * Math.sin(t * 0.04 + i * 0.5);
+      ctx.beginPath();
+      ctx.arc(Math.cos(a) * r, Math.sin(a) * r, 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = gold(0.32 + 0.18 * Math.sin(t * 0.05 + i));
+      ctx.fill();
+    }
+    ctx.beginPath();
+    for (let i = 0; i < 3; i++) {
+      const a = (i / 3) * Math.PI * 2 + t * 0.008;
+      i === 0 ? ctx.moveTo(Math.cos(a) * 45, Math.sin(a) * 45)
+              : ctx.lineTo(Math.cos(a) * 45, Math.sin(a) * 45);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = gold(0.18);
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.beginPath();
+    ctx.arc(0, 0, 3 + 2 * Math.sin(t * 0.06), 0, Math.PI * 2);
+    ctx.fillStyle = gold(0.72);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(0, 0, 20 + 5 * Math.sin(t * 0.04), 0, Math.PI * 2);
+    ctx.strokeStyle = gold(0.07 + 0.05 * Math.sin(t * 0.04));
+    ctx.lineWidth = 8;
+    ctx.stroke();
+    ctx.restore();
+
+    t++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── Particle field ───────────────────────────────────────────────────────── */
+(function () {
+  const canvas = document.getElementById('hero-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  function Particle() { this.reset(); }
+  Particle.prototype.reset = function () {
+    this.x = Math.random() * W; this.y = Math.random() * H;
+    this.r = Math.random() * 1.2 + 0.2;
+    this.vx = (Math.random() - 0.5) * 0.14;
+    this.vy = -Math.random() * 0.22 - 0.05;
+    this.life = Math.random(); this.maxLife = Math.random() * 0.6 + 0.2;
+  };
+  function init() { resize(); particles = Array.from({ length: 80 }, () => new Particle()); }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.life += 0.002;
+      if (p.life > p.maxLife || p.y < -5) p.reset();
+      const a = Math.sin((p.life / p.maxLife) * Math.PI) * 0.48;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200,168,74,${a})`; ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', resize);
+  init(); draw();
+})();
+
+/* ── Scroll reveal ────────────────────────────────────────────────────────── */
+(function () {
+  const els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(el => el.style.opacity = '1'); return;
+  }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.style.animationPlayState = 'running'; io.unobserve(e.target); }
+    });
+  }, { threshold: 0.14 });
+  els.forEach(el => { el.style.animationPlayState = 'paused'; io.observe(el); });
+})();
+</script>
+{% endblock %}

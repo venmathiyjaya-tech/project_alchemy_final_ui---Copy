@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}The Observatory — VASYA{% endblock %}
+{% block main_class %}main-content--full{% endblock %}
+
+{% block content %}
+{#
+  journal.index always passes recommendation=None.
+  The real Observatory lives at recommend.dashboard.
+  This page redirects immediately so the user always lands
+  in the correct Observatory with live recommendation data.
+#}
+<script>
+  window.location.replace("{{ url_for('recommend.dashboard') }}");
+</script>
+
+<!-- Graceful fallback if JS is disabled -->
+<div style="min-height:80vh;display:flex;align-items:center;justify-content:center;
+            flex-direction:column;gap:2rem;text-align:center;padding:2rem;">
+  <span style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;
+               font-style:italic;color:var(--gold);opacity:0.5;">✦</span>
+  <p style="font-family:'EB Garamond',Georgia,serif;font-style:italic;
+            font-size:1rem;color:var(--taupe);">
+    Entering the Observatory…
+  </p>
+  <a href="{{ url_for('recommend.dashboard') }}"
+     style="font-family:'Montserrat',sans-serif;font-size:0.62rem;
+            letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);
+            opacity:0.6;text-decoration:none;">
+    Enter the Observatory →
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,438 @@
+{% extends "base.html" %}
+{% block title %}The Confessional — VASYA{% endblock %}
+{% block main_class %}main-content--full{% endblock %}
+
+{% block head %}
+<style>
+  .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+  .prompt-row{display:flex;align-items:center;gap:.75rem;}
+  .prompt-row .confessional__prompt{margin:0;}
+  .voice-icon-btn{display:inline-flex;align-items:center;justify-content:center;width:2rem;height:2rem;flex:none;
+    background:none;border:1px solid rgba(200,168,74,.28);border-radius:50%;color:var(--gold,#c8a84a);
+    cursor:pointer;opacity:.75;transition:opacity 160ms,border-color 160ms;}
+  .voice-icon-btn:hover,.voice-icon-btn:focus-visible{opacity:1;border-color:var(--gold,#c8a84a);}
+  .voice-row{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem;margin-top:var(--sp-2,1rem);}
+  .btn-mic,.btn-speak{display:inline-flex;align-items:center;gap:.55rem;padding:1rem 1.5rem;font-size:.6rem;}
+  .btn-mic--on{border-color:var(--ember,#c0603a);color:var(--ember,#c0603a);animation:micPulse 1.6s ease-out infinite;}
+  @keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(192,96,58,.45);}100%{box-shadow:0 0 0 14px rgba(192,96,58,0);}}
+  .voice-lang{background:transparent;color:var(--taupe,#a89070);border:1px solid rgba(200,168,74,.28);
+    padding:.6rem .7rem;font-family:var(--ff-ui,sans-serif);font-size:.62rem;letter-spacing:.08em;}
+  .voice-lang option{background:#130e0a;color:#d0c0a0;}
+  .voice-status{min-height:1.3em;margin:.6rem 0 0;font-family:var(--ff-body,serif);font-style:italic;font-size:.85rem;color:var(--taupe,#a89070);}
+  .voice-note{margin:.4rem 0 0;max-width:56ch;font-family:var(--ff-body,serif);font-style:italic;font-size:.74rem;line-height:1.6;color:var(--taupe,#a89070);opacity:.8;}
+  @media (prefers-reduced-motion: reduce){.btn-mic--on{animation:none;}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="confessional">
+
+  <!-- ── Header ─────────────────────────────────────────────────────── -->
+  <div style="margin-bottom:var(--sp-5);">
+    <span class="overline">The Confessional</span>
+    <h1 class="page-heading" style="margin-top:0.5rem;font-family:var(--ff-display);font-style:italic;font-weight:300;font-size:clamp(2.2rem,5vw,4rem);">
+      Your Journal
+    </h1>
+    <hr class="rule-gold" />
+    <p style="font-family:var(--ff-body);font-style:italic;font-size:0.95rem;color:var(--taupe);max-width:48ch;line-height:1.8;margin-top:var(--sp-2);">
+      Write freely. There is no wrong answer here. The archive receives what you offer.
+    </p>
+  </div>
+
+  <div class="confessional__layout">
+
+    <!-- ══════════════════════════════════════════════════════════════
+         LEFT — Compose
+    ══════════════════════════════════════════════════════════════════ -->
+    <div class="confessional__compose">
+
+      <!-- Rotating prompt -->
+      <div class="prompt-row">
+        <p class="confessional__prompt" id="journal-prompt">
+          What lingers within you today?
+        </p>
+        <button type="button" class="voice-icon-btn" id="speak-prompt-btn"
+                aria-label="Read the prompt aloud" title="Read the prompt aloud"><svg class="voice-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
+      </div>
+
+      <!-- Parchment writing surface -->
+      <div class="confessional__surface" id="compose-surface">
+
+        <!-- Subtle ruled lines background -->
+        <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;opacity:0.04;">
+          {% for i in range(12) %}
+            <div style="position:absolute;left:0;right:0;height:1px;background:var(--gold);top:{{ (i + 1) * 7.5 }}%;"></div>
+          {% endfor %}
+        </div>
+
+        <textarea
+          class="journal-textarea"
+          id="journal-textarea"
+          aria-label="Journal entry"
+          placeholder="Write freely. There is no wrong answer here…"
+          maxlength="2000"
+          rows="12"
+          style="position:relative;z-index:1;"
+        ></textarea>
+        <p class="confessional__counter">
+          <span id="char-count">0</span> / 2000
+        </p>
+      </div>
+
+      <!-- Emotional presence indicator (subtle, non-intrusive) -->
+      <div id="presence-indicator" aria-live="polite"
+           style="font-family:var(--ff-ui);font-size:0.52rem;letter-spacing:0.28em;
+                  text-transform:uppercase;color:var(--dust);opacity:0;
+                  transition:opacity 800ms;margin-top:-var(--sp-2);">
+        Reflection in progress…
+      </div>
+
+      <!-- Notification area -->
+      <div id="compose-notification" hidden></div>
+
+      <!-- Voice journaling: speak your entry, or hear it read back -->
+      <div class="voice-row" id="voice-row">
+        <button type="button" class="btn-ghost btn-mic" id="mic-btn" aria-pressed="false">
+          <svg class="voice-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span class="btn-mic__label">Speak</span>
+        </button>
+        <label class="visually-hidden" for="voice-lang">Voice language</label>
+        <select class="voice-lang" id="voice-lang">
+          <option value="en-US">English (US)</option>
+          <option value="en-GB">English (UK)</option>
+          <option value="en-MY">English (Malaysia)</option>
+        </select>
+        <button type="button" class="btn-ghost btn-speak" id="readback-btn" title="Hear your entry read aloud">
+          <svg class="voice-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg><span>Listen back</span>
+        </button>
+      </div>
+      <p class="voice-status" id="voice-status" aria-live="polite"></p>
+      <p class="voice-note">
+        Voice input uses your browser&rsquo;s speech service. Chrome and Edge send the audio to
+        the browser vendor to be transcribed; Vasya itself never stores audio.
+      </p>
+
+      <!-- Actions -->
+      <div class="confessional__actions">
+        <button type="button" class="btn-ritual" id="submit-btn">
+          ✦ &nbsp; Offer Reflection
+        </button>
+        <button type="button" class="btn-ghost" id="clear-btn"
+                style="padding:1rem 1.5rem;font-size:0.6rem;">
+          Clear
+        </button>
+      </div>
+
+    </div><!-- /.confessional__compose -->
+
+    <!-- ══════════════════════════════════════════════════════════════
+         RIGHT — Entry timeline
+    ══════════════════════════════════════════════════════════════════ -->
+    <div class="confessional__timeline">
+      <p class="confessional__timeline-heading">Recent Entries</p>
+      <div class="entry-list" id="entry-list">
+        {% if entries %}
+          {% for entry in entries %}
+            <div class="entry-item"
+                 id="entry-{{ entry.id }}"
+                 data-entry-id="{{ entry.id }}"
+                 data-submitted="{{ entry.submitted_at.isoformat() }}">
+              <p class="entry-item__date">
+                {{ entry.submitted_at.strftime('%d %b %Y · %H:%M') }}
+              </p>
+              <p class="entry-item__text">{{ entry.entry_text }}</p>
+              {% if entry.emotion_vector %}
+                {% set ev = entry.emotion_vector | from_json %}
+                {% if ev %}
+                  <div class="entry-item__badges">
+                    {% set sorted_emotions = ev.items() | sort(attribute='1', reverse=True) %}
+                    {% for label, score in sorted_emotions %}
+                      {% if loop.index <= 3 and score > 0.05 %}
+                        <span class="emotion-badge emotion-badge--{{ label | lower }}">
+                          {{ label }} &nbsp; {{ (score * 100) | round | int }}%
+                        </span>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              {% endif %}
+              <button class="delete-btn"
+                      data-entry-id="{{ entry.id }}"
+                      aria-label="Delete this entry"
+                      style="margin-top:var(--sp-2);background:none;border:none;
+                             font-family:var(--ff-ui);font-size:0.52rem;
+                             letter-spacing:0.15em;text-transform:uppercase;
+                             color:var(--dust);opacity:0.35;cursor:pointer;
+                             padding:0;transition:opacity 160ms;">
+                ✕ &nbsp; Delete
+              </button>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="entry-item" style="text-align:center;padding:var(--sp-4);">
+            <p style="font-family:var(--ff-body);font-style:italic;
+                      font-size:0.9rem;color:var(--dust);opacity:0.55;">
+              The page awaits your first reflection.
+            </p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div><!-- /.confessional__layout -->
+</div><!-- /.confessional -->
+
+<!-- FAB — back to Observatory -->
+<a href="{{ url_for('recommend.dashboard') }}" class="fab-write"
+   aria-label="Return to the Observatory"
+   style="background:var(--espresso);">
+  <span aria-hidden="true">◈</span>
+</a>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/voice.js') }}" defer></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ── Rotating prompts ──────────────────────────────────────────────── */
+  const PROMPTS = [
+    'What lingers within you today?',
+    'What remained unspoken?',
+    'Write without performance.',
+    'What emotional residue do you carry?',
+    'What does this moment feel like?',
+    'What are you trying not to feel?',
+    'Describe the texture of today.',
+    'What have you been carrying quietly?',
+    'What emotion asks for attention right now?',
+    'What lingers beneath your words?',
+  ];
+  const promptEl = document.getElementById('journal-prompt');
+  if (promptEl) promptEl.textContent = PROMPTS[Math.floor(Math.random() * PROMPTS.length)];
+
+  /* ── Elements ─────────────────────────────────────────────────────── */
+  const textarea   = document.getElementById('journal-textarea');
+  const charCount  = document.getElementById('char-count');
+  const submitBtn  = document.getElementById('submit-btn');
+  const clearBtn   = document.getElementById('clear-btn');
+  const surface    = document.getElementById('compose-surface');
+  const notifArea  = document.getElementById('compose-notification');
+  const entryList  = document.getElementById('entry-list');
+  const presenceEl = document.getElementById('presence-indicator');
+
+  /* ── Character counter + presence indicator ───────────────────────── */
+  let presenceTimer;
+  textarea.addEventListener('input', () => {
+    const len = textarea.value.length;
+    charCount.textContent = len;
+    charCount.style.color = len > 1900 ? 'var(--ember)' : '';
+
+    if (presenceEl) {
+      presenceEl.style.opacity = '1';
+      clearTimeout(presenceTimer);
+      presenceTimer = setTimeout(() => { presenceEl.style.opacity = '0'; }, 2200);
+    }
+  });
+
+  /* ── Inline notification ──────────────────────────────────────────── */
+  function showNotification(html, type) {
+    notifArea.hidden = false;
+    notifArea.className = 'confessional__notification' +
+      (type === 'error' ? ' confessional__notification--error' : '');
+    notifArea.innerHTML = html;
+  }
+
+  /* ── Prepend entry to timeline ────────────────────────────────────── */
+  function prependEntry(entry, emotions) {
+    const emptyMsg = entryList.querySelector('.entry-item:not([data-entry-id])');
+    if (emptyMsg) emptyMsg.remove();
+
+    const date    = new Date(entry.submitted_at);
+    const dateStr = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                  + ' · ' + date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+    let badgesHtml = '';
+    if (emotions && typeof emotions === 'object') {
+      badgesHtml = Object.entries(emotions)
+        .sort((a, b) => b[1] - a[1]).slice(0, 3).filter(([, v]) => v > 0.05)
+        .map(([label, score]) =>
+          `<span class="emotion-badge emotion-badge--${label.toLowerCase()}">${label} &nbsp; ${Math.round(score * 100)}%</span>`
+        ).join('');
+    }
+
+    const div = document.createElement('div');
+    div.className = 'entry-item';
+    div.id = `entry-${entry.entry_id || entry.id}`;
+    div.dataset.entryId  = entry.entry_id || entry.id;
+    div.dataset.submitted = entry.submitted_at;
+    div.innerHTML = `
+      <p class="entry-item__date">${dateStr}</p>
+      <p class="entry-item__text">${entry.entry_text}</p> ${badgesHtml ? `<div class="entry-item__badges">${badgesHtml}</div>` : ''}
+      <button class="delete-btn" data-entry-id="${entry.entry_id || entry.id}"
+              aria-label="Delete this entry"
+              style="margin-top:var(--sp-2);background:none;border:none;
+                     font-family:var(--ff-ui);font-size:0.52rem;letter-spacing:0.15em;
+                     text-transform:uppercase;color:var(--dust);opacity:0.35;
+                     cursor:pointer;padding:0;transition:opacity 160ms;">
+        ✕ &nbsp; Delete
+      </button>`;
+    entryList.insertBefore(div, entryList.firstChild);
+    const items = entryList.querySelectorAll('.entry-item[data-entry-id]');
+    if (items.length > 7) items[items.length - 1].remove();
+  }
+
+  /* ── Submit ───────────────────────────────────────────────────────── */
+  submitBtn.addEventListener('click', async () => {
+    // If still dictating, stop gracefully and give the last phrase a moment to arrive.
+    const dictation = window.VASYA && VASYA.voice && VASYA.voice.active;
+    if (dictation && dictation.isListening()) {
+      dictation.stop();
+      await new Promise(r => setTimeout(r, 700));
+    }
+    const text = textarea.value.trim();
+    if (!text) {
+      showNotification('<p>✕ &nbsp; The page is empty. Write something first.</p>', 'error');
+      textarea.focus();
+      return;
+    }
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Recording…';
+    notifArea.hidden = true;
+
+    try {
+      const data = await VASYA.apiPost('/journal/entry', { entry_text: text });
+      let emotions = {};
+      try { emotions = typeof data.emotion_vector === 'string' ? JSON.parse(data.emotion_vector) : data.emotion_vector; } catch (_) {}
+
+      // Explicitly check and load session values before shifting locations
+      if (emotions && Object.keys(emotions).length > 0) {
+        sessionStorage.setItem('vasya_detected_emotions', JSON.stringify(emotions));
+      }
+
+      // UI Feedback
+      showNotification('<p>✦ &nbsp; Reflection received. Entering the chamber…</p>');
+      submitBtn.textContent = 'Entering the chamber…';
+
+      // Perform a clean state change transition
+      setTimeout(() => { window.location.href = '/decoding'; }, 1000);
+
+    } catch (err) {
+      showNotification(`<p>✕ &nbsp; ${err.message}</p>`, 'error');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '✦ &nbsp; Offer Reflection';
+    }
+  });
+
+  /* ── Clear ────────────────────────────────────────────────────────── */
+  clearBtn.addEventListener('click', () => {
+    if (window.VASYA && VASYA.voice) VASYA.voice.stopAll();
+    textarea.value = '';
+    charCount.textContent = '0';
+    textarea.focus();
+    notifArea.hidden = true;
+  });
+
+  /* ── Delete — event delegation ────────────────────────────────────── */
+  entryList.addEventListener('click', async e => {
+    const btn = e.target.closest('.delete-btn');
+    if (!btn) return;
+    const entryId  = btn.dataset.entryId;
+    const item     = document.getElementById(`entry-${entryId}`);
+    const submitted = item ? new Date(item.dataset.submitted) : null;
+
+    if (submitted && (Date.now() - submitted.getTime()) > 86400000) {
+      showNotification('<p>✕ &nbsp; Entries can only be deleted within 24 hours of writing.</p>', 'error');
+      return;
+    }
+    btn.textContent = 'Removing…';
+    try {
+      await VASYA.apiDelete(`/journal/entry/${entryId}`);
+
+      // Issue #7 cleanup handler
+      try {
+        await VASYA.apiDelete(`/recommend/by-entry/${entryId}`);
+      } catch (_) {}
+
+      if (item) {
+        item.style.transition = 'opacity 400ms, transform 400ms';
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(-12px)';
+        setTimeout(() => item.remove(), 420);
+      }
+    } catch (err) {
+      showNotification(`<p>✕ &nbsp; ${err.message}</p>`, 'error');
+      btn.textContent = '✕ &nbsp; Delete';
+    }
+  });
+
+  /* ── Delete button hover via delegation ──────────────────────────── */
+  entryList.addEventListener('mouseover', e => {
+    const btn = e.target.closest('.delete-btn');
+    if (btn) btn.style.opacity = '0.85';
+  });
+  entryList.addEventListener('mouseout', e => {
+    const btn = e.target.closest('.delete-btn');
+    if (btn) btn.style.opacity = '0.35';
+  });
+
+  /* ── Voice journaling (voice.js is deferred, so wait for DOMContentLoaded) ── */
+  document.addEventListener('DOMContentLoaded', () => {
+    const V          = window.VASYA && VASYA.voice;
+    const micBtn     = document.getElementById('mic-btn');
+    const langSel    = document.getElementById('voice-lang');
+    const statusEl   = document.getElementById('voice-status');
+    const promptBtn  = document.getElementById('speak-prompt-btn');
+    const readBackBtn = document.getElementById('readback-btn');
+    if (!V || !micBtn) return;
+
+    const setStatus = msg => { statusEl.textContent = msg || ''; };
+    const support   = V.isSupported(window);
+
+    let lang = 'en-US';
+    try { lang = localStorage.getItem('vasya_voice_lang') || lang; } catch (_) {}
+    if ([...langSel.options].some(o => o.value === lang)) langSel.value = lang;
+
+    if (!support.stt) {
+      micBtn.disabled = true;
+      langSel.disabled = true;
+      micBtn.title = 'Voice input needs Chrome, Edge or Safari';
+      setStatus('Voice input is not available in this browser. Try Chrome or Edge.');
+    } else {
+      const dictation = V.createDictation({
+        textarea,
+        lang: langSel.value,
+        maxLen: 2000,
+        onState(state, detail) {
+          const on = state === 'listening';
+          micBtn.classList.toggle('btn-mic--on', on);
+          micBtn.setAttribute('aria-pressed', String(on));
+          micBtn.querySelector('.btn-mic__label').textContent = on ? 'Stop' : 'Speak';
+          setStatus(on ? 'Listening… speak freely.' : detail);
+        },
+      });
+      micBtn.addEventListener('click', () => dictation.toggle());
+      langSel.addEventListener('change', () => {
+        dictation.setLang(langSel.value);
+        try { localStorage.setItem('vasya_voice_lang', langSel.value); } catch (_) {}
+      });
+    }
+
+    if (!support.tts) {
+      promptBtn.hidden = true;
+      readBackBtn.hidden = true;
+    } else {
+      promptBtn.addEventListener('click', () => V.speak(promptEl.textContent, langSel.value));
+      readBackBtn.addEventListener('click', () => {
+        if (!V.speak(textarea.value, langSel.value)) setStatus('Write or speak something first.');
+      });
+    }
+
+    window.addEventListener('pagehide', () => V.stopAll());
+  });
+
+})();
+</script>
+{% endblock %}
