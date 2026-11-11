@@ -48,3 +48,4 @@ transformers
 typer
 typing_extensions
 Werkzeug
+python-dotenv
